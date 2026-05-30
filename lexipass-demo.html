@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>法智通 LexiPass — App Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1209;--parchment:#f5f0e8;--gold:#c9922a;--gold-light:#e8b84b;
+  --seal:#8b1a1a;--stone:#6b6358;--jade:#2d6b4a;--sky:#2a5a8b;
+  --mist:#e8e2d6;--shadow:rgba(10,7,2,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#111;font-family:'Noto Serif TC',serif;
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 12px;min-height:100vh;
+}
+h1{color:#888;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+   font-family:'DM Mono',monospace;margin-bottom:8px;text-align:center;}
+p.sub{color:#555;font-size:10px;letter-spacing:1px;margin-bottom:32px;
+      font-family:'DM Mono',monospace;text-align:center;}
+
+/* 畫面切換 */
+.screens-wrap{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;}
+.screen-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.screen-label{color:#666;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:2px;}
+
+/* 手機外框 */
+.phone{
+  width:360px;border-radius:40px;overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.06);
+  background:var(--parchment);flex-shrink:0;
+}
+.status{
+  height:44px;background:var(--ink);display:flex;
+  align-items:center;justify-content:space-between;padding:0 24px;
+  color:var(--parchment);font-size:12px;font-family:'DM Mono',monospace;
+}
+.bat{width:20px;height:10px;border:1.5px solid currentColor;border-radius:2px;position:relative;}
+.bat::after{content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);
+            width:2px;height:5px;background:currentColor;border-radius:0 1px 1px 0;}
+.bat-fill{height:100%;width:75%;background:#6ee7b7;border-radius:1px;}
+
+/* ── S1 登入 ── */
+.s1{min-height:700px;background:var(--ink);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:40px 28px;position:relative;overflow:hidden;}
+.s1::before{content:'法';position:absolute;font-size:260px;font-weight:900;
+            color:rgba(201,146,42,.05);top:50%;left:50%;transform:translate(-50%,-50%);}
+.seal-ring{width:76px;height:76px;border:2px solid var(--gold);border-radius:50%;
+           display:flex;align-items:center;justify-content:center;margin-bottom:18px;position:relative;}
+.seal-ring::before{content:'';position:absolute;inset:5px;border:1px solid rgba(201,146,42,.25);border-radius:50%;}
+.seal-char{font-size:34px;color:var(--gold);font-weight:900;}
+.brand-title{color:var(--parchment);font-size:28px;font-weight:700;letter-spacing:5px;margin-bottom:4px;}
+.brand-sub{color:var(--stone);font-size:10px;letter-spacing:2.5px;margin-bottom:44px;font-family:'DM Mono',monospace;}
+.inp{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(201,146,42,.2);
+     border-radius:10px;padding:13px 16px;color:var(--parchment);font-size:14px;
+     font-family:'Noto Serif TC',serif;margin-bottom:12px;outline:none;}
+.inp::placeholder{color:rgba(245,240,232,.28);}
+.btn-gold{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));
+          border:none;border-radius:10px;padding:14px;color:var(--ink);
+          font-size:15px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:6px;}
+.divider{width:100%;display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--stone);font-size:11px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(201,146,42,.15);}
+.reg-link{color:var(--gold);font-size:13px;letter-spacing:1px;}
+.legal-note{margin-top:28px;color:rgba(107,99,88,.45);font-size:10px;text-align:center;line-height:1.8;font-family:'DM Mono',monospace;}
+
+/* ── S2 首頁 ── */
+.s2{min-height:700px;background:var(--parchment);}
+.home-hdr{background:var(--ink);padding:20px 22px 28px;position:relative;overflow:hidden;}
+.home-hdr::after{content:'';position:absolute;bottom:-1px;left:0;right:0;
+                 height:20px;background:var(--parchment);border-radius:20px 20px 0 0;}
+.greet{color:rgba(245,240,232,.45);font-size:11px;letter-spacing:2.5px;margin-bottom:3px;font-family:'DM Mono',monospace;}
+.user-name{color:var(--parchment);font-size:20px;font-weight:700;margin-bottom:14px;}
+.chips{display:flex;gap:8px;}
+.chip{background:rgba(201,146,42,.1);border:1px solid rgba(201,146,42,.22);
+      border-radius:20px;padding:4px 13px;color:var(--gold-light);font-size:11px;font-family:'DM Mono',monospace;}
+.home-body{padding:18px;}
+.upload-card{background:var(--ink);border-radius:16px;padding:22px;margin-bottom:18px;cursor:pointer;}
+.up-icon{width:46px;height:46px;background:rgba(201,146,42,.13);border-radius:12px;
+         display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+.up-title{color:var(--parchment);font-size:17px;font-weight:700;margin-bottom:5px;}
+.up-desc{color:var(--stone);font-size:12px;line-height:1.65;}
+.up-btn{display:inline-block;margin-top:14px;background:linear-gradient(135deg,var(--gold),var(--gold-light));
+        border:none;border-radius:8px;padding:9px 18px;color:var(--ink);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.sec-label{font-size:10px;letter-spacing:3px;color:var(--stone);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:10px;}
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.act-card{background:white;border-radius:13px;padding:15px;box-shadow:0 2px 10px var(--shadow);}
+.act-icon{font-size:22px;margin-bottom:7px;}
+.act-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.act-desc{font-size:10px;color:var(--stone);line-height:1.4;}
+.case-list{display:flex;flex-direction:column;gap:9px;}
+.case-item{background:white;border-radius:12px;padding:13px 15px;display:flex;
+            align-items:center;gap:12px;box-shadow:0 2px 8px var(--shadow);}
+.case-dot{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.dot-cr{background:rgba(139,26,26,.1);}
+.dot-ci{background:rgba(42,90,139,.1);}
+.dot-ad{background:rgba(45,107,74,.1);}
+.case-info{flex:1;}
+.case-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.case-date{font-size:10px;color:var(--stone);font-family:'DM Mono',monospace;}
+.case-tag{font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;}
+.tag-cr{background:rgba(139,26,26,.09);color:var(--seal);}
+.tag-ci{background:rgba(42,90,139,.09);color:var(--sky);}
+.tag-ad{background:rgba(45,107,74,.09);color:var(--jade);}
+.bnav{background:white;border-top:1px solid var(--mist);display:flex;padding:9px 0 16px;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.bnav-icon{font-size:20px;}
+.bnav-label{font-size:8px;color:var(--stone);letter-spacing:1px;font-family:'DM Mono',monospace;}
+.bnav-item.act .bnav-label{color:var(--gold);}
+
+/* ── S3 分析結果 ── */
+.s3{min-height:700px;background:var(--parchment);}
+.res-hdr{background:var(--ink);padding:18px 22px 22px;}
+.back{color:rgba(201,146,42,.5);font-size:11px;font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:10px;}
+.res-title{color:var(--parchment);font-size:19px;font-weight:700;margin-bottom:5px;}
+.res-meta{color:var(--stone);font-size:10px;font-family:'DM Mono',monospace;}
+.res-body{padding:18px;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.type-btn{border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700;border:2px solid var(--mist);background:white;color:var(--stone);}
+.type-btn.sel{background:var(--seal);color:white;border-color:var(--seal);}
+.conf-bar{background:rgba(201,146,42,.1);border:1px solid rgba(201,146,42,.3);border-radius:8px;
+          padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:18px;}
+.conf-txt{color:var(--gold);font-size:11px;font-family:'DM Mono',monospace;}
+.blk-card{background:white;border-radius:13px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px var(--shadow);}
+.blk-hdr{background:var(--ink);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.blk-hdr-ico{font-size:15px;}
+.blk-hdr-txt{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;}
+.blk-body{padding:14px 16px;}
+.irac-row{display:flex;gap:0;margin-bottom:13px;}
+.irac-step{flex:1;text-align:center;padding:8px 4px;border-right:1px solid var(--mist);}
+.irac-step:last-child{border-right:none;}
+.irac-letter{font-size:18px;font-weight:900;color:var(--gold);}
+.irac-name{font-size:8px;color:var(--stone);margin-top:2px;letter-spacing:.5px;font-family:'DM Mono',monospace;}
+.irac-text{font-size:12px;color:var(--stone);line-height:1.7;background:var(--parchment);padding:11px;border-radius:8px;}
+.law-item{border-left:3px solid var(--gold);padding:9px 13px;margin-bottom:9px;background:var(--parchment);border-radius:0 8px 8px 0;}
+.law-code{font-size:10px;color:var(--gold);font-family:'DM Mono',monospace;font-weight:600;}
+.law-title{font-size:13px;font-weight:700;color:var(--ink);margin:3px 0;}
+.law-life{font-size:11px;color:var(--stone);line-height:1.6;}
+.law-life span{color:var(--jade);font-weight:600;}
+.out-row{display:flex;gap:9px;}
+.out-btn{flex:1;border:none;border-radius:10px;padding:13px 8px;cursor:pointer;
+         display:flex;flex-direction:column;align-items:center;gap:5px;}
+.out-ico{font-size:19px;}
+.out-lbl{color:white;font-size:11px;font-weight:700;}
+.out-pdf{background:var(--seal);}
+.out-doc{background:var(--sky);}
+.out-viz{background:var(--jade);}
+
+/* ── S4 視覺化 ── */
+.s4{min-height:700px;background:#0a0e1a;}
+.viz-hdr{background:#0d1220;border-bottom:1px solid rgba(201,146,42,.18);padding:18px 18px 14px;}
+.viz-title{color:var(--gold);font-size:15px;font-weight:700;letter-spacing:2px;margin-bottom:11px;}
+.tab-row{display:flex;gap:0;overflow-x:auto;}
+.tab-row::-webkit-scrollbar{display:none;}
+.tab-btn{padding:6px 14px;border:1px solid rgba(201,146,42,.2);background:transparent;
+         color:var(--stone);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+         cursor:pointer;white-space:nowrap;border-right:none;}
+.tab-btn:first-child{border-radius:5px 0 0 5px;}
+.tab-btn:last-child{border-right:1px solid rgba(201,146,42,.2);border-radius:0 5px 5px 0;}
+.tab-btn.act{background:var(--gold);color:var(--ink);font-weight:700;}
+.viz-body{padding:18px;}
+.d-card{background:#111827;border:1px solid rgba(201,146,42,.13);border-radius:12px;padding:15px;margin-bottom:14px;}
+.d-label{font-size:9px;color:#64748b;font-family:'DM Mono',monospace;letter-spacing:2px;margin-bottom:13px;}
+
+/* Timeline */
+.tl-wrap{position:relative;padding-left:18px;}
+.tl-line{position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--gold),rgba(201,146,42,.1));}
+.tl-item{display:flex;gap:13px;margin-bottom:18px;}
+.tl-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;z-index:1;}
+.tl-dot-p{width:13px;height:13px;border-radius:50%;border:2px dashed var(--jade);background:transparent;flex-shrink:0;margin-top:2px;z-index:1;}
+.tl-date{font-size:9px;font-family:'DM Mono',monospace;margin-bottom:2px;}
+.tl-event{font-size:12px;font-weight:600;color:#e2e8f0;margin-bottom:2px;}
+.tl-detail{font-size:10px;color:#64748b;line-height:1.5;}
+
+/* Person Relation */
+.pr-wrap{position:relative;height:220px;}
+.pr-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+           background:rgba(201,146,42,.13);border:2px solid var(--gold);border-radius:50%;
+           width:64px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;}
+.pr-center-ico{font-size:19px;}
+.pr-center-lbl{color:var(--gold);font-size:8px;font-family:'DM Mono',monospace;margin-top:1px;}
+.pr-node{position:absolute;background:#111827;border-radius:10px;padding:7px 9px;text-align:center;min-width:72px;}
+.pr-ico{font-size:16px;}
+.pr-role{font-size:9px;font-weight:700;margin-top:2px;}
+.pr-name{font-size:8px;color:#64748b;font-family:'DM Mono',monospace;}
+
+/* Evidence */
+.ev-sec{background:#111827;border-radius:10px;overflow:hidden;margin-bottom:12px;}
+.ev-hdr{padding:8px 13px;display:flex;align-items:center;gap:7px;}
+.ev-hdr-lbl{font-size:10px;font-family:'DM Mono',monospace;font-weight:700;letter-spacing:1px;}
+.ev-item{padding:10px 13px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.04);}
+.ev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ev-name{color:#e2e8f0;font-size:11px;flex:1;}
+.ev-bar-wrap{width:60px;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
+.ev-bar{height:100%;border-radius:3px;}
+.ev-status{font-size:9px;font-family:'DM Mono',monospace;white-space:nowrap;}
+
+/* ── S5 深入分析 ── */
+.s5{min-height:700px;background:#0a0e1a;}
+.s5-hdr{background:#0d1220;border-bottom:1px solid rgba(201,146,42,.18);padding:18px 18px 14px;}
+.s5-back{color:rgba(201,146,42,.45);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1.5px;margin-bottom:6px;}
+.s5-title{color:var(--gold);font-size:16px;font-weight:700;letter-spacing:2px;margin-bottom:3px;}
+.s5-sub{color:#64748b;font-size:9px;font-family:'DM Mono',monospace;}
+.s5-body{padding:18px;}
+.depth-card{background:#111827;border:1px solid rgba(201,146,42,.13);border-radius:12px;padding:14px;margin-bottom:13px;}
+.depth-lbl{font-size:9px;color:#64748b;font-family:'DM Mono',monospace;letter-spacing:2px;margin-bottom:10px;}
+.depth-bars{display:flex;gap:5px;margin-bottom:7px;}
+.d-bar{flex:1;height:6px;border-radius:3px;}
+.d-bar.on{background:var(--gold);}
+.d-bar.off{background:rgba(201,146,42,.18);}
+.depth-level{color:var(--gold-light);font-size:11px;font-family:'DM Mono',monospace;}
+.dual-block{background:#111827;border:1px solid rgba(201,146,42,.13);border-radius:12px;margin-bottom:13px;overflow:hidden;}
+.dual-hdr{background:var(--ink);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.dual-hdr-txt{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;}
+.dual-body{padding:14px;}
+.side-label{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.side-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.side-tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:700;letter-spacing:.5px;}
+.side-box{padding:9px 11px;border-radius:0 6px 6px 0;margin-bottom:12px;}
+.side-txt{font-size:11px;line-height:1.7;}
+.ev-strength{background:#111827;border:1px solid rgba(201,146,42,.13);border-radius:12px;overflow:hidden;margin-bottom:13px;}
+.str-row{display:flex;align-items:center;gap:10px;padding:10px 14px;}
+.str-name{font-size:11px;color:#94a3b8;width:90px;flex-shrink:0;}
+.str-bar-bg{flex:1;height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;}
+.str-bar-fill{height:100%;border-radius:4px;}
+.str-pct{font-size:10px;font-family:'DM Mono',monospace;width:28px;text-align:right;}
+
+/* ── S6 解決方案 ── */
+.s6{min-height:700px;background:var(--parchment);}
+.s6-hdr{background:var(--ink);padding:18px 22px 22px;}
+.strat-tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:18px;}
+.strat-tab{border-radius:20px;padding:7px 15px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.strat-tab.sel{background:var(--ink);color:var(--gold);border:1px solid var(--gold);font-weight:700;}
+.strat-tab.unsel{background:white;color:var(--stone);border:1px solid var(--mist);}
+.strat-card{background:white;border-radius:13px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.strat-hdr{padding:13px 16px;display:flex;align-items:center;gap:10px;}
+.strat-hdr-ico{font-size:18px;}
+.strat-hdr-title{color:white;font-size:13px;font-weight:700;letter-spacing:1px;}
+.strat-hdr-sub{color:rgba(255,255,255,.55);font-size:9px;font-family:'DM Mono',monospace;}
+.strat-body{padding:15px;}
+.step-item{display:flex;gap:11px;align-items:flex-start;margin-bottom:10px;}
+.step-num{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
+.step-txt{font-size:12px;color:var(--ink);line-height:1.6;}
+.tip-box{background:rgba(45,107,74,.06);border-radius:8px;padding:9px 11px;display:flex;gap:8px;margin-top:11px;}
+.tip-ico{font-size:16px;}
+.tip-txt{font-size:11px;color:var(--stone);line-height:1.6;}
+.risk-card{background:white;border-radius:13px;padding:15px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.risk-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.risk-item{text-align:center;}
+.risk-num{font-size:30px;font-weight:900;}
+.risk-lbl{font-size:9px;color:var(--stone);font-family:'DM Mono',monospace;margin-top:2px;}
+.lawyer-cta{background:linear-gradient(135deg,var(--ink),#2a1f0a);border-radius:13px;padding:16px;display:flex;align-items:center;gap:12px;}
+.lawyer-ico{font-size:30px;}
+.lawyer-txt{flex:1;}
+.lawyer-title{color:var(--parchment);font-size:13px;font-weight:700;margin-bottom:3px;}
+.lawyer-sub{color:var(--stone);font-size:11px;line-height:1.5;}
+.lawyer-btn{background:var(--gold);border-radius:8px;padding:8px 11px;color:var(--ink);font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+
+/* ── S7 警語 ── */
+.s7{min-height:700px;background:#110805;}
+.s7-hdr{background:#1a0808;border-bottom:1px solid rgba(139,26,26,.35);padding:26px 22px 22px;display:flex;flex-direction:column;align-items:center;}
+.warn-ring{width:68px;height:68px;border:2px solid var(--seal);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:13px;position:relative;}
+.warn-ring::before{content:'';position:absolute;inset:5px;border:1px solid rgba(139,26,26,.28);border-radius:50%;}
+.warn-ico{font-size:26px;color:var(--seal);}
+.warn-title{color:#f87171;font-size:17px;font-weight:700;letter-spacing:4px;margin-bottom:3px;}
+.warn-sub{color:rgba(248,113,113,.45);font-size:9px;font-family:'DM Mono',monospace;letter-spacing:2.5px;}
+.s7-body{padding:18px;}
+.disc-main{background:#1e0a0a;border:1px solid rgba(139,26,26,.28);border-radius:13px;padding:16px;margin-bottom:13px;}
+.disc-hdr-txt{color:#f87171;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.disc-border-txt{font-size:12px;color:#e2c8c8;line-height:1.85;border-left:3px solid var(--seal);padding-left:13px;}
+.disc-border-txt span{color:#fca5a5;font-weight:700;}
+.warn-item{background:#1e0a0a;border:1px solid rgba(139,26,26,.18);border-radius:12px;padding:13px;display:flex;gap:11px;margin-bottom:10px;}
+.warn-item-dot{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.warn-item-title{font-size:11px;font-weight:700;margin-bottom:3px;}
+.warn-item-desc{font-size:11px;color:#9a8080;line-height:1.6;}
+.ok-item{background:#0a1e0e;border:1px solid rgba(45,107,74,.18);}
+.ok-dot{background:rgba(45,107,74,.15);}
+.ok-title{color:#6ee7b7;}
+.ok-desc{color:#7a9a8a!important;}
+.agree-box{background:rgba(139,26,26,.08);border:1px solid rgba(139,26,26,.22);border-radius:12px;padding:13px;margin-bottom:12px;text-align:center;}
+.agree-note{color:rgba(248,113,113,.65);font-size:10px;font-family:'DM Mono',monospace;line-height:1.7;margin-bottom:11px;}
+.agree-btn{background:linear-gradient(135deg,var(--seal),#a02020);border:none;border-radius:8px;padding:11px 0;color:white;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;}
+.ver-note{text-align:center;color:rgba(139,26,26,.28);font-size:9px;font-family:'DM Mono',monospace;letter-spacing:1.5px;line-height:1.8;}
+</style>
+</head>
+<body>
+<h1>法智通 LexiPass — App Demo</h1>
+<p class="sub">Prototype v2.0 · 7 Screens</p>
+
+<div class="screens-wrap">
+
+<!-- ══ S1 登入 ══ -->
+<div class="screen-group">
+<div class="screen-label">01 · 登入</div>
+<div class="phone">
+  <div class="status"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s1">
+    <div class="seal-ring"><span class="seal-char">法</span></div>
+    <div class="brand-title">法智通</div>
+    <div class="brand-sub">LEXIPASS · 法律文書輔助平台</div>
+    <input class="inp" placeholder="手機號碼 / 電子信箱">
+    <input class="inp" type="password" placeholder="密　　　　碼">
+    <button class="btn-gold">登　入</button>
+    <div class="divider">或</div>
+    <a class="reg-link" href="#">尚未註冊？立即申請帳號 →</a>
+    <div class="legal-note">本平台提供法律文書輔助服務<br>非律師法第48條之法律諮詢</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S2 首頁 ══ -->
+<div class="screen-group">
+<div class="screen-label">02 · 首頁</div>
+<div class="phone">
+  <div class="status" style="background:var(--ink)"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s2">
+    <div class="home-hdr">
+      <div class="greet">GOOD MORNING</div>
+      <div class="user-name">李先生，您好</div>
+      <div class="chips"><div class="chip">案件 3 件</div><div class="chip">分析完成 2</div></div>
+    </div>
+    <div class="home-body">
+      <div class="upload-card">
+        <div class="up-icon">📷</div>
+        <div class="up-title">拍照上傳文件</div>
+        <div class="up-desc">拍攝傳票、法院通知、合約等文件<br>AI 即時分析，生成法條說明與書狀</div>
+        <button class="up-btn">開始拍照分析 →</button>
+      </div>
+      <div class="sec-label">快速功能</div>
+      <div class="act-grid">
+        <div class="act-card"><div class="act-icon">⚖️</div><div class="act-title">法條查詢</div><div class="act-desc">白話說明，情境化解釋</div></div>
+        <div class="act-card"><div class="act-icon">📄</div><div class="act-title">書狀產生</div><div class="act-desc">PDF / Word 雙格式輸出</div></div>
+        <div class="act-card"><div class="act-icon">📊</div><div class="act-title">案件視覺化</div><div class="act-desc">流程圖、關係圖分析</div></div>
+        <div class="act-card"><div class="act-icon">👨‍⚖️</div><div class="act-title">諮詢律師</div><div class="act-desc">媒合合作律師預約</div></div>
+      </div>
+      <div class="sec-label">近期案件</div>
+      <div class="case-list">
+        <div class="case-item"><div class="case-dot dot-cr">⚖️</div><div class="case-info"><div class="case-name">妨害名譽案件</div><div class="case-date">2026-05-28 · 高雄地院</div></div><div class="case-tag tag-cr">刑事</div></div>
+        <div class="case-item"><div class="case-dot dot-ci">📑</div><div class="case-info"><div class="case-name">借貸糾紛答辯狀</div><div class="case-date">2026-05-20 · 台南地院</div></div><div class="case-tag tag-ci">民事</div></div>
+        <div class="case-item"><div class="case-dot dot-ad">🏛️</div><div class="case-info"><div class="case-name">營業登記訴願書</div><div class="case-date">2026-05-12 · 行政</div></div><div class="case-tag tag-ad">行政</div></div>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bnav-item act"><div class="bnav-icon">🏠</div><div class="bnav-label">首頁</div></div>
+      <div class="bnav-item"><div class="bnav-icon">📁</div><div class="bnav-label">案件</div></div>
+      <div class="bnav-item"><div class="bnav-icon">📊</div><div class="bnav-label">分析</div></div>
+      <div class="bnav-item"><div class="bnav-icon">👤</div><div class="bnav-label">帳戶</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S3 AI分析結果 ══ -->
+<div class="screen-group">
+<div class="screen-label">03 · AI 分析結果</div>
+<div class="phone">
+  <div class="status"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s3">
+    <div class="res-hdr">
+      <div class="back">← 返回首頁</div>
+      <div class="res-title">AI 案情分析報告</div>
+      <div class="res-meta">2026-05-30 09:41 · OCR 辨識完成</div>
+    </div>
+    <div class="res-body">
+      <div style="font-size:10px;color:var(--stone);font-family:'DM Mono',monospace;letter-spacing:2px;margin-bottom:8px;">AI 案件分類 · 請確認或選擇</div>
+      <div class="type-grid">
+        <div class="type-btn sel">⚖️ 刑事案件</div>
+        <div class="type-btn">📑 民事案件</div>
+        <div class="type-btn">🏛️ 行政案件</div>
+        <div class="type-btn">📋 其　　他</div>
+      </div>
+      <div class="conf-bar"><span style="font-size:14px;">🎯</span><span class="conf-txt">AI 信心度 94% · 刑事案件</span></div>
+      <div class="blk-card">
+        <div class="blk-hdr"><div class="blk-hdr-ico">🧠</div><div class="blk-hdr-txt">IRAC 論證框架</div></div>
+        <div class="blk-body">
+          <div class="irac-row">
+            <div class="irac-step"><div class="irac-letter">I</div><div class="irac-name">Issue 爭點</div></div>
+            <div class="irac-step"><div class="irac-letter">R</div><div class="irac-name">Rule 法條</div></div>
+            <div class="irac-step"><div class="irac-letter">A</div><div class="irac-name">Apply 涵攝</div></div>
+            <div class="irac-step"><div class="irac-letter">C</div><div class="irac-name">Conclusion</div></div>
+          </div>
+          <div class="irac-text">本案涉及刑法第310條誹謗罪之構成要件。被告於社群媒體散布足以毀損告訴人名譽之言論，爭點在於言論是否具有「散布於眾」之要件…</div>
+        </div>
+      </div>
+      <div class="blk-card">
+        <div class="blk-hdr"><div class="blk-hdr-ico">⚖️</div><div class="blk-hdr-txt">相關法條 · 情境化說明</div></div>
+        <div class="blk-body">
+          <div class="law-item"><div class="law-code">刑法 § 310</div><div class="law-title">誹謗罪</div><div class="law-life">💡 <span>生活說明：</span>在公開場合散布足以損害他人名譽的言論，可能構成誹謗。</div></div>
+          <div class="law-item"><div class="law-code">刑法 § 311</div><div class="law-title">誹謗免責事由</div><div class="law-life">💡 <span>生活說明：</span>善意發表真實且涉及公益之言論，不構成誹謗。</div></div>
+        </div>
+      </div>
+      <div class="sec-label" style="margin-bottom:10px;">輸出書狀</div>
+      <div class="out-row">
+        <button class="out-btn out-pdf"><div class="out-ico">📕</div><div class="out-lbl">PDF 檔</div></button>
+        <button class="out-btn out-doc"><div class="out-ico">📘</div><div class="out-lbl">Word 檔</div></button>
+        <button class="out-btn out-viz"><div class="out-ico">📊</div><div class="out-lbl">視覺化</div></button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S4 視覺化 ══ -->
+<div class="screen-group">
+<div class="screen-label">04 · 視覺化儀表板</div>
+<div class="phone">
+  <div class="status" style="background:#0d1220;"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s4">
+    <div class="viz-hdr">
+      <div class="viz-title">案件視覺分析 DASHBOARD</div>
+      <div class="tab-row">
+        <button class="tab-btn act">時間軸</button>
+        <button class="tab-btn">思維流程</button>
+        <button class="tab-btn">人物關係</button>
+        <button class="tab-btn">證據人證</button>
+      </div>
+    </div>
+    <div class="viz-body">
+      <div class="d-card">
+        <div class="d-label">EVENT TIMELINE · 事件時間關係圖</div>
+        <div class="tl-wrap">
+          <div class="tl-line"></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--gold)"></div><div><div class="tl-date" style="color:var(--gold)">2026-03-15</div><div class="tl-event">被告於臉書發文</div><div class="tl-detail">散布足以損害告訴人名譽之言論</div></div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--sky)"></div><div><div class="tl-date" style="color:#93c5fd">2026-03-22</div><div class="tl-event">告訴人發現貼文</div><div class="tl-detail">截圖存證，名譽損害擴大</div></div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--seal)"></div><div><div class="tl-date" style="color:#f87171">2026-04-05</div><div class="tl-event">提起刑事告訴</div><div class="tl-detail">向高雄地方檢察署提起誹謗告訴</div></div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:#a855f7"></div><div><div class="tl-date" style="color:#d8b4fe">2026-05-10</div><div class="tl-event">傳喚被告到庭</div><div class="tl-detail">檢察官傳喚被告應訊</div></div></div>
+          <div class="tl-item"><div class="tl-dot-p"></div><div><div class="tl-date" style="color:#6ee7b7">2026-06-20 · 待定</div><div class="tl-event" style="color:#94a3b8">下次偵查庭</div><div class="tl-detail">預計進行雙方對質</div></div></div>
+        </div>
+      </div>
+      <div class="d-card">
+        <div class="d-label">PERSON RELATIONSHIP · 人物關係圖</div>
+        <div class="pr-wrap">
+          <div class="pr-center"><div class="pr-center-ico">⚖️</div><div class="pr-center-lbl">本案</div></div>
+          <div class="pr-node" style="top:10px;left:10px;border:1px solid rgba(42,90,139,.35)"><div class="pr-ico">👤</div><div class="pr-role" style="color:#93c5fd">告訴人</div><div class="pr-name">甲○○</div></div>
+          <div class="pr-node" style="top:10px;right:10px;border:1px solid rgba(139,26,26,.35)"><div class="pr-ico">👤</div><div class="pr-role" style="color:#f87171">被告</div><div class="pr-name">乙○○</div></div>
+          <div class="pr-node" style="bottom:10px;left:10px;border:1px solid rgba(201,146,42,.25)"><div class="pr-ico">👨‍⚖️</div><div class="pr-role" style="color:var(--gold)">辯護律師</div><div class="pr-name">被告委任</div></div>
+          <div class="pr-node" style="bottom:10px;right:10px;border:1px solid rgba(139,26,26,.25)"><div class="pr-ico">🏛️</div><div class="pr-role" style="color:#f87171">檢察官</div><div class="pr-name">公訴</div></div>
+        </div>
+      </div>
+      <div class="d-card">
+        <div class="d-label">EVIDENCE · 證據人證</div>
+        <div class="ev-sec">
+          <div class="ev-hdr" style="background:rgba(42,90,139,.18)"><span>📎</span><span class="ev-hdr-lbl" style="color:#93c5fd">書　證</span></div>
+          <div class="ev-item"><div class="ev-dot" style="background:#93c5fd"></div><div class="ev-name">臉書貼文截圖</div><div class="ev-bar-wrap"><div class="ev-bar" style="width:90%;background:#93c5fd"></div></div><div class="ev-status" style="color:#6ee7b7">已採認</div></div>
+          <div class="ev-item"><div class="ev-dot" style="background:#93c5fd"></div><div class="ev-name">貼文分享紀錄</div><div class="ev-bar-wrap"><div class="ev-bar" style="width:65%;background:#fbbf24"></div></div><div class="ev-status" style="color:#fbbf24">待補強</div></div>
+        </div>
+        <div class="ev-sec" style="margin-top:8px;">
+          <div class="ev-hdr" style="background:rgba(45,107,74,.18)"><span>🧑‍🤝‍🧑</span><span class="ev-hdr-lbl" style="color:#6ee7b7">人　證</span></div>
+          <div class="ev-item"><div class="ev-dot" style="background:#6ee7b7"></div><div class="ev-name">證人甲（閱覽者）</div><div class="ev-bar-wrap"><div class="ev-bar" style="width:75%;background:#6ee7b7"></div></div><div class="ev-status" style="color:#6ee7b7">已採認</div></div>
+          <div class="ev-item"><div class="ev-dot" style="background:#6ee7b7"></div><div class="ev-name">證人乙（友人）</div><div class="ev-bar-wrap"><div class="ev-bar" style="width:50%;background:#fbbf24"></div></div><div class="ev-status" style="color:#fbbf24">待傳</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S5 深入分析 ══ -->
+<div class="screen-group">
+<div class="screen-label">05 · 深入分析</div>
+<div class="phone">
+  <div class="status" style="background:#0d1220;"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s5">
+    <div class="s5-hdr">
+      <div class="s5-back">← 返回分析結果</div>
+      <div class="s5-title">ULTRATHINK · 深入分析</div>
+      <div class="s5-sub">妨害名譽案件 · 刑法§310</div>
+    </div>
+    <div class="s5-body">
+      <div class="depth-card">
+        <div class="depth-lbl">ANALYSIS DEPTH</div>
+        <div class="depth-bars"><div class="d-bar on"></div><div class="d-bar on"></div><div class="d-bar on"></div><div class="d-bar off"></div><div class="d-bar off"></div></div>
+        <div class="depth-level">Level 3 / 5 · 深度論證模式</div>
+      </div>
+      <div class="dual-block">
+        <div class="dual-hdr"><span style="font-size:15px;">⚖️</span><span class="dual-hdr-txt">雙方觀點對照分析</span></div>
+        <div class="dual-body">
+          <div class="side-label"><div class="side-dot" style="background:var(--seal)"></div><span class="side-tag" style="color:#f87171">PROSECUTION · 告訴人</span></div>
+          <div class="side-box" style="background:rgba(139,26,26,.07);border-left:3px solid var(--seal);"><div class="side-txt" style="color:#e2c8c8">被告於臉書公開發文，使不特定多數人得以瀏覽，符合「散布」要件。言論內容涉及具體事實，構成誹謗罪客觀要件。</div></div>
+          <div class="side-label"><div class="side-dot" style="background:var(--sky)"></div><span class="side-tag" style="color:#93c5fd">DEFENSE · 被告辯護方</span></div>
+          <div class="side-box" style="background:rgba(42,90,139,.07);border-left:3px solid var(--sky);"><div class="side-txt" style="color:#c8d8e8">言論係基於真實事實之陳述，依刑法§311第3款，善意發表評論者，不罰。被告主觀上無毀損名譽之意圖。</div></div>
+        </div>
+      </div>
+      <div class="ev-strength">
+        <div class="dual-hdr"><span style="font-size:15px;">🔍</span><span class="dual-hdr-txt">證據強度分析</span></div>
+        <div class="str-row"><div class="str-name">臉書截圖</div><div class="str-bar-bg"><div class="str-bar-fill" style="width:90%;background:linear-gradient(90deg,#6ee7b7,#34d399)"></div></div><div class="str-pct" style="color:#6ee7b7">90%</div></div>
+        <div class="str-row"><div class="str-name">證人證詞</div><div class="str-bar-bg"><div class="str-bar-fill" style="width:65%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></div></div><div class="str-pct" style="color:#fbbf24">65%</div></div>
+        <div class="str-row"><div class="str-name">名譽損害</div><div class="str-bar-bg"><div class="str-bar-fill" style="width:45%;background:linear-gradient(90deg,#f87171,#ef4444)"></div></div><div class="str-pct" style="color:#f87171">45%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S6 解決方案 ══ -->
+<div class="screen-group">
+<div class="screen-label">06 · 解決方案</div>
+<div class="phone">
+  <div class="status"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s6">
+    <div class="s6-hdr">
+      <div class="back" style="margin-bottom:10px;">← 返回深入分析</div>
+      <div style="color:var(--parchment);font-size:19px;font-weight:700;margin-bottom:5px;">解決方案建議</div>
+      <div style="color:var(--stone);font-size:10px;font-family:'DM Mono',monospace;">AI 生成 · 僅供參考 · 建議諮詢律師</div>
+    </div>
+    <div class="res-body">
+      <div class="strat-tabs">
+        <div class="strat-tab sel">主動和解</div>
+        <div class="strat-tab unsel">訴訟抗辯</div>
+        <div class="strat-tab unsel">撤回告訴</div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-hdr" style="background:linear-gradient(135deg,var(--jade),#1e5c38)">
+          <div class="strat-hdr-ico">🤝</div>
+          <div><div class="strat-hdr-title">策略一：主動和解</div><div class="strat-hdr-sub">RECOMMENDED · 勝算較高</div></div>
+        </div>
+        <div class="strat-body">
+          <div class="step-item"><div class="step-num" style="background:rgba(45,107,74,.1);color:var(--jade)">1</div><div class="step-txt">聯繫告訴人表達和解意願，透過<strong style="color:var(--jade)">調解委員會</strong>進行民事調解</div></div>
+          <div class="step-item"><div class="step-num" style="background:rgba(45,107,74,.1);color:var(--jade)">2</div><div class="step-txt">主動刪除相關貼文，出具<strong style="color:var(--jade)">道歉聲明書</strong>，展現悔意</div></div>
+          <div class="step-item"><div class="step-num" style="background:rgba(45,107,74,.1);color:var(--jade)">3</div><div class="step-txt">誹謗罪屬<strong style="color:var(--jade)">告訴乃論</strong>，和解後可聲請撤回告訴</div></div>
+          <div class="tip-box"><div class="tip-ico">💡</div><div class="tip-txt">和解費用通常遠低於訴訟成本，且可避免前科紀錄，建議優先考慮</div></div>
+        </div>
+      </div>
+      <div class="risk-card">
+        <div class="sec-label" style="margin-bottom:12px;">RISK ASSESSMENT · 風險評估</div>
+        <div class="risk-row">
+          <div class="risk-item"><div class="risk-num" style="color:var(--jade)">低</div><div class="risk-lbl">和解風險</div></div>
+          <div class="risk-item"><div class="risk-num" style="color:var(--seal)">高</div><div class="risk-lbl">不和解風險</div></div>
+        </div>
+      </div>
+      <div class="lawyer-cta">
+        <div class="lawyer-ico">👨‍⚖️</div>
+        <div class="lawyer-txt"><div class="lawyer-title">進一步諮詢律師</div><div class="lawyer-sub">本建議由 AI 生成，正式法律意見請諮詢合格律師</div></div>
+        <div class="lawyer-btn">預約 →</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S7 警語 ══ -->
+<div class="screen-group">
+<div class="screen-label">07 · 警語聲明</div>
+<div class="phone">
+  <div class="status" style="background:#1a0505;"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span style="font-size:10px">●●●</span><div class="bat"><div class="bat-fill"></div></div></div></div>
+  <div class="s7">
+    <div class="s7-hdr">
+      <div class="warn-ring"><span class="warn-ico">⚠</span></div>
+      <div class="warn-title">重要警語聲明</div>
+      <div class="warn-sub">LEGAL DISCLAIMER · 律師法合規聲明</div>
+    </div>
+    <div class="s7-body">
+      <div class="disc-main">
+        <div class="disc-hdr-txt">📌 服務性質聲明</div>
+        <div class="disc-border-txt">本平台所提供之一切內容，均屬<span>「法律文書輔助服務」</span>，非律師法第48條所規範之法律諮詢或訴訟代理服務。</div>
+      </div>
+      <div class="warn-item">
+        <div class="warn-item-dot" style="background:rgba(139,26,26,.18)">❌</div>
+        <div><div class="warn-item-title" style="color:#f87171">不得視為法律意見</div><div class="warn-item-desc">AI 分析結果不具備正式法律效力，不得作為訴訟策略之唯一依據</div></div>
+      </div>
+      <div class="warn-item">
+        <div class="warn-item-dot" style="background:rgba(139,26,26,.18)">❌</div>
+        <div><div class="warn-item-title" style="color:#f87171">不保證分析正確性</div><div class="warn-item-desc">法條隨時可能修訂，AI 分析可能存在誤差，使用前請自行核實</div></div>
+      </div>
+      <div class="warn-item ok-item">
+        <div class="warn-item-dot ok-dot">✅</div>
+        <div><div class="warn-item-title ok-title">本服務適合用於</div><div class="warn-item-desc ok-desc">初步了解案件性質、整理文件清單、草擬書狀草稿、尋找法律資源</div></div>
+      </div>
+      <div class="agree-box">
+        <div class="agree-note">繼續使用本服務即表示您<br>已閱讀並同意上述聲明</div>
+        <button class="agree-btn">我已了解，繼續使用</button>
+      </div>
+      <div class="ver-note">LEXIPASS v1.0 · 法智通<br>本聲明依中華民國律師法第48條制定</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end screens-wrap -->
+</body>
+</html>
